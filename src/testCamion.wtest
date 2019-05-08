@@ -74,19 +74,19 @@ describe "tests de Camion" {
 	}
 	
 	test "no puede circular en ruta si algo supera peligrosidad" {
-		assert.that(camion.puedeCircularEnRuta(16))
-		assert.notThat(camion.puedeCircularEnRuta(15))
+		assert.that(camion.puedeCircularEnRuta(31))
+		assert.notThat(camion.puedeCircularEnRuta(30))
 	}
 	
 	test "puede circular en ruta si nada supera peligrosidad" {
-		assert.that(camion.puedeCircularEnRuta(30))
+		assert.that(camion.puedeCircularEnRuta(60))
 	}
 	
 	
 	test "tiene Algo Que Pesa Entre 900 y 1001" {
 		assert.notThat(camion.tieneAlgoQuePesaEntre(900, 1001))
 	
-		residuosRadiactivos.peso(1000)
+		residuosRadiactivos.peso(900)
 		camion.cargar(residuosRadiactivos)
 		assert.that(camion.tieneAlgoQuePesaEntre(900, 1001))
 	}
@@ -101,18 +101,50 @@ describe "tests de Camion" {
 		
 	}
 	
+	
 	test "bultos" {
-		
+		//Falta testear TODOS los casos
 		assert.equals(camion.totalBultos(),2)
+		camion.cargar(residuosRadiactivos) //1
+		camion.cargar(knightRider) //1
+		camion.cargar(arenaAgranel) //1
+		camion.cargar(embalajeSeguridad) //2
+		camion.cargar(bateriaAntiaerea) //sin 1, con 2.
+		bateriaAntiaerea.descargarMisiles()
+		assert.equals(camion.totalBultos(),8) //bumble=2
 		
-		camion.cargar(residuosRadiactivos)
-		assert.equals(camion.totalBultos(),3)
+		camion.descargar(bateriaAntiaerea)
+		bateriaAntiaerea.cargarMisiles()
+		camion.cargar(bateriaAntiaerea)
+		camion.cargar(packLadrillos) //hasta 100=1,101-299=2,+300=3
+		assert.equals(camion.totalBultos(),10) 
 		
+
+		camion.descargar(packLadrillos)		
+		packLadrillos.agregarLadrillos(101)
+		camion.cargar(packLadrillos)
+		assert.equals(camion.totalBultos(),11)
+		
+		
+		camion.descargar(packLadrillos)		
+		packLadrillos.agregarLadrillos(200)
+		camion.cargar(packLadrillos)
+		assert.equals(camion.totalBultos(),12)
+		
+		
+		contenedorPortuario.cargar(bumblebee)
+		camion.cargar(contenedorPortuario) //bulto de lo que contiene + 1
+		assert.equals(camion.totalBultos(),15)
+		
+		camion.descargar(contenedorPortuario)
+		contenedorPortuario.cargar(knightRider)
+		camion.cargar(contenedorPortuario) //bulto de lo que contiene + 1
+		assert.equals(camion.totalBultos(),16)
 		
 	}
 	
 	test "lista de pesos de la carga" {
-		residuosRadiactivos.peso(1000)
+		residuosRadiactivos.peso(985)
 		camion.cargar(residuosRadiactivos)
 		camion.cargar(knightRider)
 		
@@ -120,8 +152,38 @@ describe "tests de Camion" {
 	}
 	
 	test "comportamientos de las cosas al ser cargadas al camion" {
+		//Falta testear TODOS los casos
 		
+		//knightRider no hace nada
+		//bumblebee se transforma
+		//packLadrillos agrega 12 ladrillos (osea, pesa 24)
+		//arenaAgranel agrega 20kilos
+		//bateriaAntiaerea carga misiles
+		//contenedorPortuario hace que reaccione lo que tiene adentro
+		//residuosRadiactivos agrega 15 kilos
+		//embalajeSeguridad no hace nada
 		
+		//camion.cargar(knightRider)
+		//camion.cargar(embalajeSeguridad)
+		camion.cargar(packLadrillos)
+		assert.equals(packLadrillos.peso(),24)
+		
+		camion.cargar(arenaAgranel)
+		assert.equals(arenaAgranel.peso(),20)
+		
+		camion.cargar(bateriaAntiaerea)
+		assert.equals(bateriaAntiaerea.peso(), 300)
+		
+		bumblebee.transformar()
+		assert.equals(bumblebee.peligrosidad(),15)
+		contenedorPortuario.cargar(knightRider)
+		contenedorPortuario.cargar(embalajeSeguridad)
+		contenedorPortuario.cargar(bumblebee)
+		camion.cargar(contenedorPortuario)
+		assert.equals(bumblebee.peligrosidad(),30)
+		
+		camion.cargar(residuosRadiactivos)
+		assert.equals(residuosRadiactivos.peso(),15)
 	}
 	
 }

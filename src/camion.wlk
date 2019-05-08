@@ -6,6 +6,7 @@ object camion {
 	method pesoTara() = 1000
 	
 	method cargar(unaCosa) {
+		unaCosa.serCargado()
 		cosas.add(unaCosa)
 	}
 	
