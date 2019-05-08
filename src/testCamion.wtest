@@ -1,0 +1,127 @@
+import camion.*
+import cosas.*
+
+describe "tests de Camion" { 
+
+	fixture {
+		camion.cargar(bumblebee)		
+	}
+
+	test "cargar algo al camion" {
+		assert.equals(camion.cosas(),[bumblebee])
+	}
+	
+	test "descargar algo del camion" {
+		camion.descargar(bumblebee)
+		assert.equals(camion.cosas(),[])
+	}
+	
+	test "camion sin nada pesa solo su tara (1000)" {
+		camion.descargar(bumblebee)
+		assert.equals(camion.peso(),1000)
+	}
+	
+	test "peso total del camion suma el peso de sus cosas y su tara" {
+		
+		assert.equals(camion.peso(),bumblebee.peso()+1000)
+	}
+	
+	test "peso total del camion esta excedido (mayor a 2500)" {
+		
+		residuosRadiactivos.peso(1000)
+		camion.cargar(residuosRadiactivos)
+		camion.cargar(residuosRadiactivos)
+		camion.cargar(residuosRadiactivos)
+		assert.that(camion.estaExcedidoDePeso())
+	}
+	
+	test "peso total del camion no esta excedido (hasta 2500)" {
+		assert.notThat(camion.estaExcedidoDePeso())
+	}
+	
+	test "lista de objetos con mas peligrosidad que N en el camion" {
+		
+		camion.cargar(knightRider)
+		camion.cargar(packLadrillos)
+		assert.equals(camion.objetosConMayorNivelPeligrosidad(99),[])
+		
+		residuosRadiactivos.peso(1000)
+		camion.cargar(residuosRadiactivos)
+		assert.equals(camion.objetosConMayorNivelPeligrosidad(100),[residuosRadiactivos])
+		
+		bateriaAntiaerea.cargarMisiles()
+		camion.cargar(bateriaAntiaerea)
+		assert.equals(camion.objetosConMayorNivelPeligrosidad(99),[residuosRadiactivos,bateriaAntiaerea])
+	}
+	
+	test "todos los objetos mas peligrosos que <cosa>" {
+		camion.cargar(knightRider)
+		camion.cargar(packLadrillos)
+		assert.equals(camion.objetosMasPeligrososQue(knightRider),[bumblebee])
+		
+		residuosRadiactivos.peso(1000)
+		camion.cargar(residuosRadiactivos)
+		assert.equals(camion.objetosMasPeligrososQue(bumblebee),[residuosRadiactivos])
+		
+		bateriaAntiaerea.cargarMisiles()
+		camion.cargar(bateriaAntiaerea)
+		assert.equals(camion.objetosMasPeligrososQue(bumblebee),[residuosRadiactivos,bateriaAntiaerea])
+	
+		camion.descargar(bateriaAntiaerea)
+		camion.descargar(residuosRadiactivos)
+		assert.equals(camion.objetosMasPeligrososQue(bumblebee),[])
+	
+	}
+	
+	test "no puede circular en ruta si algo supera peligrosidad" {
+		assert.that(camion.puedeCircularEnRuta(16))
+		assert.notThat(camion.puedeCircularEnRuta(15))
+	}
+	
+	test "puede circular en ruta si nada supera peligrosidad" {
+		assert.that(camion.puedeCircularEnRuta(30))
+	}
+	
+	
+	test "tiene Algo Que Pesa Entre 900 y 1001" {
+		assert.notThat(camion.tieneAlgoQuePesaEntre(900, 1001))
+	
+		residuosRadiactivos.peso(1000)
+		camion.cargar(residuosRadiactivos)
+		assert.that(camion.tieneAlgoQuePesaEntre(900, 1001))
+	}
+	
+	test "cosa Mas Pesada" {
+		camion.cargar(knightRider)
+		assert.equals(camion.cosaMasPesada(),bumblebee)
+		
+		residuosRadiactivos.peso(1000)
+		camion.cargar(residuosRadiactivos)
+		assert.equals(camion.cosaMasPesada(),residuosRadiactivos)
+		
+	}
+	
+	test "bultos" {
+		
+		assert.equals(camion.totalBultos(),2)
+		
+		camion.cargar(residuosRadiactivos)
+		assert.equals(camion.totalBultos(),3)
+		
+		
+	}
+	
+	test "lista de pesos de la carga" {
+		residuosRadiactivos.peso(1000)
+		camion.cargar(residuosRadiactivos)
+		camion.cargar(knightRider)
+		
+		assert.equals([800,1000,500],camion.pesos())
+	}
+	
+	test "comportamientos de las cosas al ser cargadas al camion" {
+		
+		
+	}
+	
+}
