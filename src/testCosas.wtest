@@ -1,0 +1,61 @@
+import camion.*
+import cosas.*
+
+test "Knight Rider pesa 500, peligrosidad 10" {
+
+	assert.equals(knightRider.peso(),500)
+	assert.equals(knightRider.peligrosidad(),10)
+}
+
+test "Bumblebee pesa 800, peligrosidad 15 (auto) o 30 (robot)" {
+	assert.equals(bumblebee.peso(),800)
+	assert.equals(bumblebee.peligrosidad(),15)
+	bumblebee.transformar()
+	assert.equals(bumblebee.peligrosidad(),30)
+}
+
+test "Paquete de ladrillos (c/ladrillo pesa 2), peligrosidad 2" {
+	
+	assert.equals(packLadrillos.peso(),0)
+	packLadrillos.agregarLadrillos(10)
+	assert.equals(packLadrillos.peso(),20)
+}
+
+test "arena a granel peso varia, peligrosidad 1" {
+	arenaAgranel.peso(10)
+	assert.equals(arenaAgranel.peso(),10)
+	assert.equals(arenaAgranel.peligrosidad(),1)
+}
+
+test "bateria antiaerea pesa 300 (con misiles), 200 (sin), peligro 100 (con) o 0 (sin)" {
+	
+	assert.equals(bateriaAntiaerea.peso(),200)
+	assert.equals(bateriaAntiaerea.peligrosidad(),0)
+	
+	bateriaAntiaerea.cargarMisiles()
+	
+	assert.equals(bateriaAntiaerea.peso(),300)
+	assert.equals(bateriaAntiaerea.peligrosidad(),100)
+}
+
+test "contenedor portuario puede tener otras cosas adentro. pesa 100 + peso de sus cosas,
+Es tan peligroso como el objeto mas peligroso que contiene. Si esta vacio, su peligrosidad es 0." {
+	assert.equals(contenedorPortuario.peso(),100)
+	contenedorPortuario.cargar(bumblebee)
+	contenedorPortuario.cargar(bateriaAntiaerea)
+	assert.equals(contenedorPortuario.peso(),200+100+bumblebee.peso())
+}
+
+test "residuos radiactivos peso variable, peligro 200" {
+	residuosRadiactivos.peso(100)
+	assert.equals(residuosRadiactivos.peligrosidad(),200)
+	assert.equals(residuosRadiactivos.peso(),100)
+}
+
+test "embalaje de seguridad cobertura de UNA cosa, 
+peso lo que pese la cosa, peligro la mitad de la cosa" {
+	residuosRadiactivos.peso(100)
+	embalajeSeguridad.embalar(residuosRadiactivos)
+	assert.equals(embalajeSeguridad.peligrosidad(),200/2)
+	assert.equals(embalajeSeguridad.peso(),100)
+}
